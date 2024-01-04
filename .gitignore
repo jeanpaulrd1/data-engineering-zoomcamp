@@ -160,6 +160,8 @@ cython_debug/
 #.idea/
 
 **/ny_taxi_postgres_data/**
+**/keys/**
+
 
 # Local .terraform directories
 **/.terraform/*
