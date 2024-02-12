@@ -6,46 +6,47 @@ You can find the solution for the DE Zoomcamp week 3 homework just below.
 SELECT COUNT(*)
 FROM `ny_taxi.green-tripdata_2022`;
 ```
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/57f79196-2142-4eb9-8a14-3306f2d0644a)
 
 #### Question 2
-![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/ffdf9887-8c7f-44ab-b49d-45dbbdaf0a33)
+```sql
+SELECT COUNT(DISTINCT(PULocationID)) FROM `ny_taxi.external-green-tripdata`;
+```
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/4d980a8d-e651-4a0f-a96e-ea263ee17789)
+
+```sql
+SELECT COUNT(DISTINCT(PULocationID)) FROM `ny_taxi.green-tripdata_2022`;
+```
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/a3be94c6-e9f2-4049-80b7-2f91cf6d832d)
+
+
 #### Question 3
 ```sql
-SELECT COUNT(1) 
-FROM public.green_taxi_trips
-WHERE lpep_pickup_datetime::date = '2019-09-18'
-AND lpep_dropoff_datetime::date = '2019-09-18';
+SELECT COUNT(1) FROM `ny_taxi.green-tripdata_2022`
+WHERE fare_amount = 0;
 ```
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/de7c92ca-482e-4c51-b2d5-af5f0a5cc72d)
+
 #### Question 4
 ```sql
-SELECT lpep_pickup_datetime::date,MAX(trip_distance)
-FROM public.green_taxi_trips
-group by lpep_pickup_datetime::date
-order by 2 desc
-limit 1;
+CREATE OR REPLACE TABLE `ny_taxi.green-tripdata_2022_partitoned_clustered` 
+PARTITION BY DATE(lpep_pickup_datetime)
+CLUSTER BY PULocationID AS
+SELECT * FROM `ny_taxi.green-tripdata_2022`;
 ```
-#### Question 5
+#### Question 5 
 ```sql
-SELECT z."Borough", SUM(total_amount)
-FROM public.green_taxi_trips gtt
-JOIN public.zones z on gtt."PULocationID" = z."LocationID"
-WHERE lpep_pickup_datetime::date = '2019-09-18'
-AND z."Borough" != 'Unknown'
-GROUP BY z."Borough"
-HAVING SUM(total_amount)> 50000
-ORDER BY 2 DESC
-LIMIT 3;
+SELECT DISTINCT(PULocationID)
+FROM `ny_taxi.green-tripdata_2022_partitoned_clustered`
+WHERE DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
 ```
-#### Question 6
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/34dcaed9-84da-41bb-877e-c8e15070d395)
+
 ```sql
-SELECT tip_amount, d."Zone"
-FROM public.green_taxi_trips gtt
-JOIN public.zones z on gtt."PULocationID" = z."LocationID"
-JOIN public.zones d on gtt."DOLocationID" = d."LocationID"
-WHERE lpep_pickup_datetime::date >= '2019-09-01' and lpep_pickup_datetime::date <= '2019-09-30'
-AND z."Zone" = 'Astoria'
-ORDER BY 1 DESC
-LIMIT 1;
+SELECT DISTINCT(PULocationID)
+FROM `ny_taxi.green-tripdata_2022`
+WHERE DATE(lpep_pickup_datetime) BETWEEN '2022-06-01' AND '2022-06-30';
 ```
-#### Question 7
-![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/1a53b062-bb4b-4bb9-b183-629d4b97ad41)
+![image](https://github.com/jeanpaulrd1/data-engineering-zoomcamp/assets/19482586/51793d00-1d1d-49da-97ab-7d00a0a05f27)
+
+
